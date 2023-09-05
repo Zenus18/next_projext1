@@ -1,6 +1,6 @@
 import Image from "next/image";
-import Kategories from "./btn_kategories";
-import Product_content from "./product_content";
+import Kategories from "./component/btn_kategories";
+import Product_content from "./component/product_content";
 
 export default function Home() {
   const categories = ["Semua", "Kategori 1", "Kategori 2", "Kategori 3"];
@@ -22,28 +22,34 @@ export default function Home() {
     },
   ];
   return (
-    <div className="w-full h-screen">
-      <div className="mt-5 mx-2 md:mx-5 flex flex-col">
+    <div>
+      <div className="mt-5 mx-5 md:mx-5 flex flex-col">
         <div className="flex flex-col">
           <label className="text-lg font-bold text-black">Kategories</label>
           <div className="md:w-3/4  w-full flex-wrap flex justify-start">
-            {categories.map((categories) => (
-              <Kategories categories_name={categories}></Kategories>
-            ))}
+            <Kategories categories_name={"semua"} status={true}></Kategories>
+            <Kategories categories_name={"kandang"} status={false}></Kategories>
+            <Kategories categories_name={"cat food"} status={false}></Kategories>
+            <Kategories categories_name={"dog food"} status={false}></Kategories>
           </div>
         </div>
         <div className="mt-10">
           <label className="text-lg font-bold text-black ">Produk</label>
-          <div className="grid grid-cols-3 md:grid-cols-6 mb-20">
-            {
-              product.map((product) => (
-                <Product_content discount={product.disc} title={product.title} price={product.price}/>
-              ))
-            }
+          <div className="grid grid-cols-3 md:grid-cols-4 mb-20 gap-2">
+            {product.map((product, index) => {
+              return (
+                <Product_content
+                  discount={product.disc}
+                  title={product.title}
+                  price={product.price}
+                  key={index}
+                />
+              );
+            })}
           </div>
         </div>
       </div>
-      <div className="bottom-12 right-0 me-3 mb-10 fixed overflow-visible">
+      <div className="bottom-12 right-0 me-3 mb-10 fixed">
         <button className="h-[3.5rem] w-[3.5rem] rounded-full bg-primary">
           <svg
             className="m-auto"

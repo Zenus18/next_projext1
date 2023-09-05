@@ -1,6 +1,7 @@
 "use client";
+import Image from "next/image";
 import React, { useState } from "react";
-export default function Product_content({discount, title, price}) {
+export default function Product_content({discount, title, price, index}) {
   const [button_value, setbutton_value] = useState(0)
     function discount_handler(){
       if (discount == 0){
@@ -8,13 +9,6 @@ export default function Product_content({discount, title, price}) {
       }else{
         return "text-sm text-primary mt-auto self-end"
       }
-    }
-    function handlebutton() {
-        if(button_value == 0){
-            return true;
-        }else{
-            return false;
-        }
     }
     function button_state(){
         if(button_value > 0){
@@ -25,17 +19,19 @@ export default function Product_content({discount, title, price}) {
     }
   return (
     <div>
-      <div className="flex flex-col mx-1 my-2">
-        <div className="card w-full bg-white shadow-xl p-3 h-[14rem] md:h-[18rem]">
+      <div className="flex flex-col my-2">
+        <div className="card w-full bg-white shadow-xl p-3 h-[10rem] md:h-[18rem] rounded-md">
           <figure className="w-full h-full my-auto">
-            <img
-              src="https://c4.wallpaperflare.com/wallpaper/54/838/538/whiskas-cat-basket-blue-eyes-wallpaper-preview.jpg"
-              alt="Shoes"
+            <Image
+              src={
+                "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"
+              }
+              width={100}
+              height={100}
+              className="object-cover"
             />
           </figure>
-          <p className= {discount_handler()}>
-            disc {discount} %
-          </p>
+          <p className={discount_handler()}>disc {discount} %</p>
         </div>
         <label className="text-black text-sm mx-2 mt-2">{title}</label>
         <label className="text-primary text-sm font-bold mx-2 mt-1">
@@ -43,8 +39,11 @@ export default function Product_content({discount, title, price}) {
         </label>
         <div className="mx-2 mt-2 flex justify-between w-3/4">
           <button
-            disabled={handlebutton()}
-            onClick={() => setbutton_value(button_value - 1)}
+            onClick={() => {
+              if(button_value > 0){
+                setbutton_value(button_value-1)
+              }
+            }}
             className="p-1 border-secondary text-sm border-2 rounded-lg hover:bg-accent text-secondary "
           >
             <svg
@@ -62,7 +61,9 @@ export default function Product_content({discount, title, price}) {
               />
             </svg>
           </button>
-          <label className="text-black font-bold text-md">{button_value}</label>
+          <label className="text-black font-bold text-md bg-transparent">
+            {button_value}
+          </label>
           <button
             onClick={() => setbutton_value(button_value + 1)}
             className={button_state()}

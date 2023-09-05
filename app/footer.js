@@ -1,7 +1,17 @@
+import { usePathname, useRouter } from "next/navigation";
+import React from "react";
+
 export default function Footer() {
+   const router = useRouter();
+   const pathname = usePathname();
   return (
     <div className="w-full h-16 bg-white text-black flex justify-around px-3 items-center fixed bottom-0 mt-14">
-      <div className="text-primary flex-col  flex items-center justify-center">
+      <div
+        onClick={()=> router.push("/")}
+        className={`flex-col  flex items-center justify-center ${
+          pathname == "/" ? "text-primary" : ""
+        }`}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -18,7 +28,14 @@ export default function Footer() {
         </svg>
         <label className="text-xs">dashboard</label>
       </div>
-      <div className="text-black flex-col  flex items-center justify-center">
+      <div
+        className={`flex-col  flex items-center justify-center ${
+          pathname == "/keranjang" ? "text-primary" : ""
+        }`}
+        onClick={() => {
+          router.push("/keranjang");
+        }}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -35,7 +52,11 @@ export default function Footer() {
         </svg>
         <label className="text-xs">keranjang</label>
       </div>
-      <div className="text-black flex-col  flex items-center justify-center">
+      <div
+        className={`flex-col  flex items-center justify-center ${
+          pathname == "/report" ? "text-primary" : ""
+        }`}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -52,7 +73,11 @@ export default function Footer() {
         </svg>
         <label className="text-xs">laporan</label>
       </div>
-      <div className="text-black flex-col  flex items-center justify-center">
+      <div
+        className={`flex-col  flex items-center justify-center ${
+          pathname == "/account" ? "text-primary" : ""
+        }`}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

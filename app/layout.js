@@ -1,8 +1,8 @@
 import './globals.css'
-import { Inter } from 'next/font/google'
+import { Poppins } from 'next/font/google'
 import LayoutProvider from './layoutProvider';
 
-const inter = Inter({ subsets: ['latin'] })
+const poppins = Poppins({ subsets: ['latin'], weight: '400' })
 
 export const metadata = {
   title: 'mari belajar next',
@@ -12,8 +12,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-gray-100`}>
-        
+      <body className={`${poppins.className} bg-gray-100`}>
         <LayoutProvider>
           {children}
         </LayoutProvider>
