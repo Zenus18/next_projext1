@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <div className="w-full h-16 bg-white text-black flex justify-around px-3 items-center fixed bottom-0 mt-14">
       <div
-        onClick={()=> router.push("/")}
+        onClick={() => router.push("/")}
         className={`flex-col  flex items-center justify-center ${
           pathname == "/" ? "text-primary" : ""
         }`}
@@ -54,8 +54,11 @@ export default function Footer() {
       </div>
       <div
         className={`flex-col  flex items-center justify-center ${
-          pathname == "/report" ? "text-primary" : ""
+          pathname == "/laporan" ? "text-primary" : ""
         }`}
+        onClick={() => {
+          router.push("/laporan");
+        }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -75,7 +78,7 @@ export default function Footer() {
       </div>
       <div
         className={`flex-col  flex items-center justify-center ${
-          pathname == "/account" ? "text-primary" : ""
+          pathname == "/akun" ? "text-primary" : ""
         }`}
       >
         <svg

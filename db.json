@@ -1,0 +1,19 @@
+{
+    "products": [
+      {
+        "id": 1,
+        "name": "whiskas",
+        "price": 2000
+      },
+      {
+        "id": 2,
+        "name": "whiskas 1kg",
+        "price": 4000
+      },
+      {
+        "id": 3,
+        "name": "whiskas 2kg",
+        "price": 6000
+      }
+    ]
+}

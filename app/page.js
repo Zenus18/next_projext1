@@ -1,36 +1,54 @@
+"use client"
 import Image from "next/image";
+import axios from "axios";
+import { useState, useEffect } from "react";
 import Kategories from "./component/btn_kategories";
 import Product_content from "./component/product_content";
 
 export default function Home() {
   const categories = ["Semua", "Kategori 1", "Kategori 2", "Kategori 3"];
+  const [data, setdata] = useState([])
+  // const baseURL = "http://localhost:5000/products";
+
+  // useEffect(() => {
+  //    axios.get(baseURL).then((response) => {
+  //      setdata(response.data);
+  //    });
+  //  }, []);
+
   const product = [
     {
-      title: "kitten food",
+      name: "kitten food",
       price: "15.000",
       disc: 10,
     },
     {
-      title: "cat choise",
+      name: "cat choise",
       price: "20.000",
       disc: 0,
     },
     {
-      title: "dog food",
+      name: "dog food",
       price: "20.000",
       disc: 25,
     },
   ];
   return (
     <div>
-      <div className="mt-5 mx-5 md:mx-5 flex flex-col">
+      <div className="mt-5 mx-5 md:mx-5 flex flex-col h-screen">
         <div className="flex flex-col">
           <label className="text-lg font-bold text-black">Kategories</label>
           <div className="md:w-3/4  w-full flex-wrap flex justify-start">
             <Kategories categories_name={"semua"} status={true}></Kategories>
             <Kategories categories_name={"kandang"} status={false}></Kategories>
-            <Kategories categories_name={"cat food"} status={false}></Kategories>
-            <Kategories categories_name={"dog food"} status={false}></Kategories>
+            <Kategories
+              categories_name={"cat food"}
+              status={false}
+            ></Kategories>
+            <Kategories
+              categories_name={"dog food"}
+              status={false}
+            ></Kategories>
           </div>
         </div>
         <div className="mt-10">
@@ -40,7 +58,7 @@ export default function Home() {
               return (
                 <Product_content
                   discount={product.disc}
-                  title={product.title}
+                  title={product.name}
                   price={product.price}
                   key={index}
                 />

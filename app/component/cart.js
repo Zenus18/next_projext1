@@ -2,6 +2,7 @@
 import Image from 'next/image'
 import React from 'react'
 import { useState } from 'react';
+
 export default function Cart({image, title, price, discount}) {
   const [button_value, setbutton_value] = useState(0);
     function discount_handler() {
@@ -19,14 +20,15 @@ export default function Cart({image, title, price, discount}) {
      }
    }
   return (
-    <div className="flex w-full h-[7rem] rounded-md">
+    <div className="flex w-full h-[7rem] border-b-[1px] border-primary pb-2">
       <div className="w-[25%] p-1">
-        <div className="w-full h-full rounded-lg shadow-2xl bg-[#F9FAFF]">
+        <div className="w-full h-full rounded-lg  bg-white shadow-md">
           <Image
             src={
               "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"
             }
             className="h-[100%] w-[100%] object-contain "
+            alt='ini gambar'
             width={100}
             height={100}
           ></Image>
