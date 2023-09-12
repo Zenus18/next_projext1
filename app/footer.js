@@ -80,6 +80,9 @@ export default function Footer() {
         className={`flex-col  flex items-center justify-center ${
           pathname == "/akun" ? "text-primary" : ""
         }`}
+        onClick={() => {
+          router.push("/akun");
+        }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

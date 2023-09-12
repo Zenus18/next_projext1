@@ -1,13 +1,20 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from "react";
-export default function Product_content({discount, title, price, index}) {
+export default function Product_content({discount, title, price, index, is_discount_percent}) {
   const [button_value, setbutton_value] = useState(0)
     function discount_handler(){
       if (discount == 0){
         return "invisible"
       }else{
-        return "text-sm text-primary mt-auto self-end"
+        return "text-xs text-primary mt-auto self-end"
+      }
+    }
+    function validate_discount () {
+      if(is_discount_percent == 1){
+        return "` ${discount} %`";
+      }else{
+        return "` Rp ${discount}`";
       }
     }
     function button_state(){
@@ -31,7 +38,7 @@ export default function Product_content({discount, title, price, index}) {
               className="object-cover"
             />
           </figure>
-          <p className={discount_handler()}>disc {discount} %</p>
+          <p className={discount_handler()}>disc {is_discount_percent === 1 ? discount + " %" : "Rp " + discount}</p>
         </div>
         <label className="text-black text-sm mx-2 mt-2">{title}</label>
         <label className="text-primary text-sm font-bold mx-2 mt-1">

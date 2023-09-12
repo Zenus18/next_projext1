@@ -6,16 +6,16 @@ import Kategories from "./component/btn_kategories";
 import Product_content from "./component/product_content";
 
 export default function Home() {
-  const categories = ["Semua", "Kategori 1", "Kategori 2", "Kategori 3"];
   const [data, setdata] = useState([])
+  const [categories, setcategories] = useState([])
+  const baseURL = "http://127.0.0.1:8000/api"
   // const baseURL = "http://localhost:5000/products";
 
-  // useEffect(() => {
-  //    axios.get(baseURL).then((response) => {
-  //      setdata(response.data);
-  //    });
-  //  }, []);
-
+  useEffect(() => {
+    axios.get(baseURL+"/categories").then((response) => {setcategories(response.data)}).catch((error) => {console.error(error)});
+    axios.get(baseURL+"/products").then((response) => {setdata(response.data)}).catch((error) => {console.error(error)});
+  }, [])
+  
   const product = [
     {
       name: "kitten food",
@@ -40,24 +40,19 @@ export default function Home() {
           <label className="text-lg font-bold text-black">Kategories</label>
           <div className="md:w-3/4  w-full flex-wrap flex justify-start">
             <Kategories categories_name={"semua"} status={true}></Kategories>
-            <Kategories categories_name={"kandang"} status={false}></Kategories>
-            <Kategories
-              categories_name={"cat food"}
-              status={false}
-            ></Kategories>
-            <Kategories
-              categories_name={"dog food"}
-              status={false}
-            ></Kategories>
+            {categories.map((categories, index)=>{
+              return <Kategories categories_name={categories.name}/>
+            })}
           </div>
         </div>
         <div className="mt-10">
           <label className="text-lg font-bold text-black ">Produk</label>
           <div className="grid grid-cols-3 md:grid-cols-4 mb-20 gap-2">
-            {product.map((product, index) => {
+            {data.map((product, index) => {
               return (
                 <Product_content
-                  discount={product.disc}
+                is_discount_percent={product.is_discount_precentage}
+                  discount={product.discount}
                   title={product.name}
                   price={product.price}
                   key={index}
@@ -83,7 +78,7 @@ export default function Home() {
             />
           </svg>
         </button>
-        <span class="absolute -top-2 -right-1 h-6 w-6 rounded-full bg-[#ff0000] flex justify-center items-center items">
+        <span className="absolute -top-2 -right-1 h-6 w-6 rounded-full bg-[#ff0000] flex justify-center items-center items">
           <span className="text-white text-xs">10</span>
         </span>
       </div>
