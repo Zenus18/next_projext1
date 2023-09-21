@@ -1,69 +1,164 @@
-"use client"
-import Image from "next/image";
+"use client";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import Kategories from "./component/btn_kategories";
 import Product_content from "./component/product_content";
+import { usePathname, useRouter } from "next/navigation";
 
-export default function Home() {
-  const [data, setdata] = useState([])
-  const [categories, setcategories] = useState([])
-  const baseURL = "http://127.0.0.1:8000/api"
-  // const baseURL = "http://localhost:5000/products";
-
+export default function () {
+  const [isLoading, setIsLoading] = useState(false);
+  const [products, setproducts] = useState([]);
+  const [categories, setcategories] = useState([]);
+  const [cart, setcart] = useState([]);
+  const [cat_select, setcat_select] = useState("semua");
+  const [search, setsearch] = useState("");
+  const baseURL = "http://127.0.0.1:8000/api";
+  const router = useRouter();
+  const pathname = usePathname();
+  const cartBadge = () => {
+    if (cart.length == 0) {
+      return "hidden";
+    } else {
+      return "absolute -top-2 -right-1 h-6 w-6 rounded-full bg-[#ff0000] flex justify-center items-center items";
+    }
+  };
   useEffect(() => {
-    axios.get(baseURL+"/categories").then((response) => {setcategories(response.data)}).catch((error) => {console.error(error)});
-    axios.get(baseURL+"/products").then((response) => {setdata(response.data)}).catch((error) => {console.error(error)});
-  }, [])
-  
-  const product = [
-    {
-      name: "kitten food",
-      price: "15.000",
-      disc: 10,
-    },
-    {
-      name: "cat choise",
-      price: "20.000",
-      disc: 0,
-    },
-    {
-      name: "dog food",
-      price: "20.000",
-      disc: 25,
-    },
-  ];
+    axios
+      .get(baseURL + "/categories")
+      .then((response) => {
+        setcategories(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    //tambahkan if statement untuk index di dashboard
+    axios
+      .get(baseURL + "/products")
+      .then((response) => {
+        setproducts(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    axios
+      .get(baseURL + "/carts/pending")
+      .then((response) => {
+        setcart(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
   return (
     <div>
-      <div className="mt-5 mx-5 md:mx-5 flex flex-col h-screen">
-        <div className="flex flex-col">
-          <label className="text-lg font-bold text-black">Kategories</label>
-          <div className="md:w-3/4  w-full flex-wrap flex justify-start">
-            <Kategories categories_name={"semua"} status={true}></Kategories>
-            {categories.map((categories, index)=>{
-              return <Kategories categories_name={categories.name}/>
-            })}
+      <div className="flex flex-col h-screen">
+        <div className="h-20 w-full bg-primary flex gap-2 p-5">
+          <div className="rounded-lg bg-gray-100 p-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={3}
+              stroke="#FF9738"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h16.5"
+              />
+            </svg>
+          </div>
+          <div className="w-full rounded-lg bg-white flex gap-1 items-center px-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="#FF9738"
+              className="w-6 h-6 "
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+              />
+            </svg>
+            <input
+              type="text"
+              className="form-control input bg-transparent text-primary w-full h-full rounded-lg"
+              onChange={(e) => setsearch(e.target.value)}
+            ></input>
           </div>
         </div>
-        <div className="mt-10">
-          <label className="text-lg font-bold text-black ">Produk</label>
-          <div className="grid grid-cols-3 md:grid-cols-4 mb-20 gap-2">
-            {data.map((product, index) => {
+
+        <div className="flex flex-col mt-5 mx-5">
+          <label className="text-lg font-bold text-black">Kategories</label>
+          <div className="md:w-3/4  w-full flex-wrap flex justify-start">
+            <button
+              onClick={() => setcat_select("semua")}
+              className={`text-md px-5 py-0.5 rounded-lg me-5 mt-2 flex-wrap stroke-secondary border
+                  ${
+                    cat_select == "semua"
+                      ? "text-white bg-secondary"
+                      : "bg-accent text-secondary"
+                  }`}
+            >
+              semua
+            </button>
+            {categories.map((categories, index) => {
               return (
-                <Product_content
-                is_discount_percent={product.is_discount_precentage}
-                  discount={product.discount}
-                  title={product.name}
-                  price={product.price}
-                  key={index}
-                />
+                <button
+                  key={categories.id}
+                  onClick={() => setcat_select(categories.name)}
+                  className={`text-md px-5 py-0.5 rounded-lg me-5 mt-2 flex-wrap stroke-secondary border
+                  ${
+                    cat_select == categories.name
+                      ? "text-white bg-secondary"
+                      : "bg-accent text-secondary"
+                  }`}
+                >
+                  {categories.name}
+                </button>
               );
             })}
           </div>
         </div>
+        <div className="mt-10 mx-5">
+          <label className="text-lg font-bold text-black ">Produk</label>
+          <div className="grid grid-cols-3 md:grid-cols-4 mb-20 gap-2">
+            {products
+              // .filter((product) => {
+              //   return search.toLowerCase === ""
+              //     ? product
+              //     : product.name.toLowerCase().includes(search);
+              // })
+              .filter((product) => {
+                return search.toLowerCase === "" &&
+                  cat_select.toLowerCase === "semua"
+                  ? product
+                  : search && cat_select != "semua"
+                  ? product.name.toLowerCase().includes(search.toLowerCase()) &&
+                    product.category.name
+                      .toLowerCase()
+                      .includes(cat_select.toLowerCase())
+                  : !search && cat_select != "semua"
+                  ? product.category.name
+                      .toLowerCase()
+                      .includes(cat_select.toLowerCase())
+                  : product.name.toLowerCase().includes(search.toLowerCase());
+              })
+              .map((product, index) => {
+                return <Product_content data={product} key={product.id} />;
+              })}
+          </div>
+        </div>
       </div>
       <div className="bottom-12 right-0 me-3 mb-10 fixed">
-        <button className="h-[3.5rem] w-[3.5rem] rounded-full bg-primary">
+        <button
+          className="h-[3.5rem] w-[3.5rem] rounded-full bg-primary"
+          onClick={() => router.push("/keranjang")}
+        >
           <svg
             className="m-auto"
             width="20"
@@ -78,8 +173,8 @@ export default function Home() {
             />
           </svg>
         </button>
-        <span className="absolute -top-2 -right-1 h-6 w-6 rounded-full bg-[#ff0000] flex justify-center items-center items">
-          <span className="text-white text-xs">10</span>
+        <span className={cartBadge()}>
+          <span className="text-white text-xs">{cart.length}</span>
         </span>
       </div>
     </div>

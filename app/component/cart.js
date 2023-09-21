@@ -1,43 +1,52 @@
-"use client"
-import Image from 'next/image'
-import React from 'react'
-import { useState } from 'react';
+"use client";
+import Image from "next/image";
+import React from "react";
+import { useState } from "react";
 
-export default function Cart({image, title, price, discount}) {
-  const [button_value, setbutton_value] = useState(0);
-    function discount_handler() {
-      if (discount == 0) {
-        return "invisible";
-      } else {
-        return "text-sm mx-2";
-      }
+export default function Cart({ data }) {
+  const baseImgUrl =
+    "http:\\127.0.0.1:8000/storage/images/" + data.product.image;
+  const [button_value, setbutton_value] = useState(data.qty);
+  function discount_handler() {
+    if (data.discount == 0) {
+      return "invisible";
+    } else {
+      return "text-sm mx-2";
     }
-   function button_state() {
-     if (button_value > 0) {
-       return "bg-secondary text-white p-1 border-secondary text-sm border-2 rounded-md";
-     } else {
-       return "text-secondary p-1 border-secondary text-sm border-2 rounded-md hover:bg-accent hover:text-secondary";
-     }
-   }
+  }
+  function button_state() {
+    if (button_value > 0) {
+      return "bg-secondary text-white p-1 border-secondary text-sm border-2 rounded-md";
+    } else {
+      return "text-secondary p-1 border-secondary text-sm border-2 rounded-md hover:bg-accent hover:text-secondary";
+    }
+  }
   return (
     <div className="flex w-full h-[7rem] border-b-[1px] border-primary pb-2">
       <div className="w-[25%] p-1">
         <div className="w-full h-full rounded-lg  bg-white shadow-md">
           <Image
-            src={
-              "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"
-            }
+            src={baseImgUrl}
             className="h-[100%] w-[100%] object-contain "
-            alt='ini gambar'
+            alt={data.product.name}
             width={100}
             height={100}
           ></Image>
         </div>
       </div>
       <div className="w-[50%] flex-col my-auto">
-        <div className="text-md text-black font-semibold mx-2 ">{title}</div>
-        <div className="text-lg text-primary font-bold mx-2 ">Rp {price}</div>
-        <div className={discount_handler()}>disc {discount} %</div>
+        <div className="text-md text-black font-semibold mx-2 ">
+          {data.product.name}
+        </div>
+        <div className="text-lg text-primary font-bold mx-2 ">
+          Rp {data.price}
+        </div>
+        <div className={discount_handler()}>
+          disc
+          {data.product.is_discount_percentage == 1
+            ? " " + data.discount + " %"
+            : " Rp " + data.discount}
+        </div>
       </div>
       <div className="w-25% mt-auto mb-5 md:mx-auto md:my-auto">
         <div className="mx-2 mt-2 flex justify-between w-full">

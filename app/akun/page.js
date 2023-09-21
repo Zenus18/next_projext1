@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import Account_component from "../component/account_btn";
 import Image from "next/image";
 export default function page() {
   return (
