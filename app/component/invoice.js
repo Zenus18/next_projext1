@@ -1,22 +1,46 @@
-import React from 'react'
-import { useState } from 'react';
+import React from "react";
+import { useState } from "react";
+import axios from "axios";
 export default function Invoice() {
-   const [inputValue, setInputValue] = useState("");
-
-   function formatNumberWithCommas(number) {
-     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-   }
-
-   function handleInputChange(event) {
-     const rawValue = event.target.value;
-     const formattedValue = formatNumberWithCommas(rawValue.replace(/\./g, "")); // Hapus titik yang sudah ada
-     setInputValue(formattedValue);
-   }
+  const [inputValue, setInputValue] = useState("");
+  const url = "";
+  const [IsLoading, setIsLoading] = useState(true);
+  const [data, setdata] = useState({
+    cashier_id: "1",
+    customer: "",
+    paid: "",
+  });
+  function formatNumberWithCommas(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+  const SubmitHandler = () => {
+    axios
+      .post("http://127.0.0.1:8000/transactions/checkout", data)
+      .then((response) => {
+        console.log("Response data:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+  const ChangeHandler = (e) => {
+    const newdata = { ...data };
+    newdata[e.target.id] = e.target.value;
+    setdata(newdata);
+  };
+  function handleInputChange(event) {
+    const rawValue = event.target.value;
+    const formattedValue = formatNumberWithCommas(rawValue.replace(/\./g, "")); // Hapus titik yang sudah ada
+    setInputValue(formattedValue);
+  }
   return (
     <div className="w-full bg-white border border-[#E5E4E4] rounded-xl">
       <div className="mt-4 mx-8 flex-col ">
         <label className="text-xl font-bold border-b-[1px] border-black text-black">
-          Order: #1001
+          Order: #0XXX
         </label>
         <div className="flex flex-col mt-5">
           <div className="flex justify-between font-medium">
@@ -36,13 +60,24 @@ export default function Invoice() {
           </div>
           <input
             type="text"
-            placeholder="Masukkan Nominal Uang"
-            id="inputNumber"
-            value={inputValue}
-            onChange={handleInputChange}
+            placeholder="Masukkan Nama Customer"
+            id="customer"
+            onChange={(e) => ChangeHandler(e)}
+            value={data.customer}
             className="input input-bordered w-full max-w-xs bg-white border-gray-300 mt-6"
           />
-          <button className="p-4 w-full bg-primary text-white text-sm font-semibold my-5 rounded-xl">
+          <input
+            type="text"
+            placeholder="Masukkan Nominal Uang"
+            id="paid"
+            onChange={(e) => ChangeHandler(e)}
+            value={data.paid}
+            className="input input-bordered w-full max-w-xs bg-white border-gray-300 mt-6"
+          />
+          <button
+            className="p-4 w-full bg-primary text-white text-sm font-semibold my-5 rounded-xl"
+            onClick={SubmitHandler}
+          >
             bayar
           </button>
         </div>

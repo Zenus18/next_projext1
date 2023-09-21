@@ -128,11 +128,6 @@ export default function () {
           <label className="text-lg font-bold text-black ">Produk</label>
           <div className="grid grid-cols-3 md:grid-cols-4 mb-20 gap-2">
             {products
-              // .filter((product) => {
-              //   return search.toLowerCase === ""
-              //     ? product
-              //     : product.name.toLowerCase().includes(search);
-              // })
               .filter((product) => {
                 return search.toLowerCase === "" &&
                   cat_select.toLowerCase === "semua"

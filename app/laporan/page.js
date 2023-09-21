@@ -17,29 +17,29 @@ export default function Page() {
       });
   }, []);
 
-  function formatDate(inputDate) {
-    const date = new Date(inputDate);
-    const monthNames = [
-      "Januari",
-      "Februari",
-      "Maret",
-      "April",
-      "Mei",
-      "Juni",
-      "Juli",
-      "Agustus",
-      "September",
-      "Oktober",
-      "November",
-      "Desember",
-    ];
+  // function formatDate(inputDate) {
+  //   const date = new Date(inputDate);
+  //   const monthNames = [
+  //     "Januari",
+  //     "Februari",
+  //     "Maret",
+  //     "April",
+  //     "Mei",
+  //     "Juni",
+  //     "Juli",
+  //     "Agustus",
+  //     "September",
+  //     "Oktober",
+  //     "November",
+  //     "Desember",
+  //   ];
 
-    const month = monthNames[date.getMonth()];
-    const day = date.getDate();
-    const year = date.getFullYear();
-    const formattedDate = `${day} ${month} ${year}`;
-    return formattedDate;
-  }
+  //   const month = monthNames[date.getMonth()];
+  //   const day = date.getDate();
+  //   const year = date.getFullYear();
+  //   const formattedDate = `${day} ${month} ${year}`;
+  //   return formattedDate;
+  // }
 
   const formatClock = (inputDateTime) => {
     const dateTime = new Date(inputDateTime);
@@ -51,30 +51,30 @@ export default function Page() {
     return formattedTime;
   };
 
-  const groupDataByDate = () => {
-    const groupedData = {};
+  // const groupDataByDate = () => {
+  //   const groupedData = {};
 
-    data.forEach((transaction) => {
-      const currentDate = transaction.date;
-      if (!groupedData[currentDate]) {
-        groupedData[currentDate] = [];
-      }
-      groupedData[currentDate].push(transaction);
-    });
+  //   data.forEach((transaction) => {
+  //     const currentDate = transaction.date;
+  //     if (!groupedData[currentDate]) {
+  //       groupedData[currentDate] = [];
+  //     }
+  //     groupedData[currentDate].push(transaction);
+  //   });
 
-    return groupedData;
-  };
+  //   return groupedData;
+  // };
 
-  const groupedData = groupDataByDate();
+  // const groupedData = groupDataByDate();
 
   return (
     <div className="flex flex-col mt-5  mx-6 bg-[#F9FAFF] h-screen gap-4">
-      {Object.keys(groupedData).map((date) => (
-        <div key={date} className="flex-col flex text-black">
+      {data.map((transaction) => (
+        <div key={data.date} className="flex-col flex text-black">
           <label className="text-sm m-1">Tanggal</label>
-          <label className="text-lg font-bold m-1">{formatDate(date)}</label>
+          <label className="text-lg font-bold m-1">{transaction.date}</label>
           <div className="w-full border bg-white rounded-md flex flex-col p-2 gap-[17px]">
-            {groupedData[date].map((transaction) => (
+            {transaction.data.map((transaction) => (
               <div
                 className="flex flex-col border-b-[1px] border-gray-400"
                 key={transaction.id}
@@ -88,15 +88,7 @@ export default function Page() {
             ))}
             <div className="flex justify-between text-primary font-semibold">
               <label>Total Keseluruhan</label>
-              <label>
-                {"Rp " +
-                  groupedData[date]
-                    .reduce(
-                      (total, transaction) => total + transaction.total,
-                      0
-                    )
-                    .toLocaleString("id-ID")}
-              </label>
+              <label>{transaction.total.toLocaleString("id-ID")}</label>
             </div>
           </div>
         </div>
