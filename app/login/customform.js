@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 export default function Customform() {
-  const  route = useRouter()
+  const route = useRouter();
   const [TypePassword, setTypePassword] = useState(true);
   const [IconPassword, SetIconPassword] = useState(
     <svg
@@ -98,9 +98,12 @@ export default function Customform() {
         <a>Forgot password?</a>
       </label>
       <div className="mt-5 w-3/4 self-center">
-        <button className="btn bg-[#FF9738] text-lime-50 hover:bg-black w-full rounded-full" onClick={() => {
-            route.push('/')
-        }}>
+        <button
+          className="btn bg-[#FF9738] text-lime-50 hover:bg-black w-full rounded-full"
+          onClick={() => {
+            route.push("/");
+          }}
+        >
           Sign In
         </button>
       </div>
@@ -149,7 +152,7 @@ export default function Customform() {
         </button>
       </div>
       <label className="font-medium self-center py-5">
-        Don't have an account? <a className="text-orange-300">Register</a>
+        Dont have an account? <a className="text-orange-300">Register</a>
       </label>
     </div>
   );

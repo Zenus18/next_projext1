@@ -1,10 +1,12 @@
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
-export default function Invoice() {
-  const [inputValue, setInputValue] = useState("");
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
+export default function Invoice({ indata }) {
   const url = "";
   const [IsLoading, setIsLoading] = useState(true);
+  const routes = useRouter();
   const [data, setdata] = useState({
     cashier_id: "1",
     customer: "",
@@ -14,17 +16,54 @@ export default function Invoice() {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
   const SubmitHandler = () => {
-    axios
-      .post("http://127.0.0.1:8000/transactions/checkout", data)
-      .then((response) => {
-        console.log("Response data:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    Swal.fire({
+      title: "Konfirmasi Pembayaran",
+      text: "Apakah Anda yakin ingin melanjutkan pembayaran?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Ya",
+      cancelButtonText: "Tidak",
+      confirmButtonColor: "#007BFF",
+      cancelButtonColor: "#DC3545",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Lanjutkan dengan pembayaran
+        axios
+          .post("http://127.0.0.1:8000/api/transactions/checkout", data)
+          .then((response) => {
+            if (response.status === 201) {
+              Swal.fire({
+                title: "success",
+                text: response.message,
+                icon: "success",
+                confirmButtonText: "OK",
+                confirmButtonColor: "#007BFF",
+              }).then(result.isConfirmed ? routes.push("/") : null);
+            } else {
+              Swal.fire({
+                title: "failed",
+                text: response.message,
+                icon: "error",
+                confirmButtonText: "OK",
+                confirmButtonColor: "#DC3545",
+              });
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            Swal.fire({
+              title: "Pembayaran Gagal",
+              text: "Terjadi kesalahan saat melakukan pembayaran.",
+              icon: "error",
+              confirmButtonText: "OK",
+              confirmButtonColor: "#DC3545",
+            });
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      }
+    });
   };
   const ChangeHandler = (e) => {
     const newdata = { ...data };
@@ -45,17 +84,21 @@ export default function Invoice() {
         <div className="flex flex-col mt-5">
           <div className="flex justify-between font-medium">
             <label className="text-sm text-black ">Sub total</label>
-            <label className="text-sm text-black font-bold"> Rp 720.000</label>
+            <label className="text-sm text-black font-bold">
+              {indata.subtotal}
+            </label>
           </div>
           <div className="flex justify-between font-medium">
             <label className="text-sm text-black">Discount:</label>
-            <label className="text-sm text-black font-bold"> 20%</label>
+            <label className="text-sm text-black font-bold">
+              {indata.discount}
+            </label>
           </div>
           <div className="w-full border-dotted border border-black mt-2"></div>
           <div className="flex justify-between font-medium mt-4">
             <label className="text-sm text-black">Total:</label>
             <label className="text-md text-primary font-bold mt-1">
-              Rp 120.000
+              {indata.total}
             </label>
           </div>
           <input

@@ -68,21 +68,21 @@ export default function Page() {
   // const groupedData = groupDataByDate();
 
   return (
-    <div className="flex flex-col mt-5  mx-6 bg-[#F9FAFF] h-screen gap-4">
-      {data.map((transaction) => (
-        <div key={data.date} className="flex-col flex text-black">
+    <div className="flex flex-col mt-5  mx-6 bg-[#F9FAFF] gap-4 mb-28">
+      {data.map((transaction, index) => (
+        <div key={index} className="flex-col flex text-black">
           <label className="text-sm m-1">Tanggal</label>
           <label className="text-lg font-bold m-1">{transaction.date}</label>
           <div className="w-full border bg-white rounded-md flex flex-col p-2 gap-[17px]">
-            {transaction.data.map((transaction) => (
+            {transaction.data.map((transactionItem) => (
               <div
                 className="flex flex-col border-b-[1px] border-gray-400"
-                key={transaction.id}
+                key={transactionItem.id}
               >
-                <label>{formatClock(transaction.created_at)}</label>
+                <label>{formatClock(transactionItem.created_at)}</label>
                 <div className="flex justify-between text-black font-semibold">
                   <label>Total Pembelian</label>
-                  <label>{transaction.total.toLocaleString("id-ID")}</label>
+                  <label>{transactionItem.total.toLocaleString("id-ID")}</label>
                 </div>
               </div>
             ))}

@@ -1,12 +1,34 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-export default function Product_content({ data }) {
+export default function Product_content({ data, setCart, baseURL }) {
   const baseImgUrl = "http://127.0.0.1:8000/storage/images/" + data.image;
   const [button_value, setbutton_value] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:8000/api/carts/pending")
+      .then((response) => {
+        // Mencari produk yang memiliki nama yang sesuai dengan data.name
+        const matchingProduct = response.data.find((cart) => {
+          return cart.product.name === data.name ? cart : null;
+        });
+
+        // Mengatur nilai tombol berdasarkan jumlah produk dalam keranjang
+        if (matchingProduct) {
+          setbutton_value(matchingProduct.qty);
+        } else {
+          setbutton_value(0);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [data.name]);
+
+  //function untuk menampilkan discount
   function discount_handler() {
     if (data.discount == 0) {
       return "invisible";
@@ -14,6 +36,8 @@ export default function Product_content({ data }) {
       return "text-xs text-primary mt-auto self-end";
     }
   }
+
+  //function untuk button +
   function button_state() {
     if (button_value > 0) {
       return "bg-secondary text-white p-1 border-secondary text-sm border-2 rounded-lg";
@@ -24,29 +48,67 @@ export default function Product_content({ data }) {
   const button_plus = () => {
     setbutton_value(button_value + 1);
   };
+
+  //function untuk button minus
   const button_minus = () => {
     button_value > 0 ? setbutton_value(button_value - 1) : null;
   };
-  const dataPost = () => {
+
+  //function untuk post/menambah jumlah product
+  const dataPost = async () => {
     const qty_data = button_value + 1;
     const postData = {
       product_id: data.id,
       qty: qty_data,
     };
-    qty_data == 1
-      ? axios
-          .post("http://127.0.0.1:8000/carts/post", postData)
-          .then((response) => {
-            console.log("Response data:", response.data);
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          })
-          .finally(() => {
-            setIsLoading(false);
-          })
-      : axios
-          .post("http://127.0.0.1:8000/carts/update", postData)
+    try {
+      qty_data == 1
+        ? axios
+            .post("http://127.0.0.1:8000/api/carts/post", postData)
+            .then((response) => {
+              console.log("Response data:", response.data);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            })
+            .finally(() => {
+              setIsLoading(false);
+            })
+        : axios
+            .post("http://127.0.0.1:8000/api/carts/update", postData)
+            .then((response) => {
+              console.log("Response data:", response.data);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            })
+            .finally(() => {
+              setIsLoading(false);
+            });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
+    try {
+      const cartResponse = await axios.get(baseURL + "/carts/pending");
+      const cart = cartResponse.data;
+      setCart(cart.length);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  //function untuk mengurangi/menghapus product
+  const dataDel = async () => {
+    const qty_data = button_value - 1;
+    const postData = {
+      product_id: data.id,
+      qty: qty_data,
+    };
+    try {
+      if (qty_data > 0) {
+        axios
+          .post("http://127.0.0.1:8000/api/carts/update", postData)
           .then((response) => {
             console.log("Response data:", response.data);
           })
@@ -56,41 +118,34 @@ export default function Product_content({ data }) {
           .finally(() => {
             setIsLoading(false);
           });
-  };
-  const dataDel = () => {
-    const qty_data = button_value - 1;
-    const postData = {
-      product_id: data.id,
-      qty: qty_data,
-    };
-    if (qty_data > 0) {
-      axios
-        .post("http://127.0.0.1:8000/carts/update", postData)
-        .then((response) => {
-          console.log("Response data:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    } else if (qty_data == 0) {
-      axios
-        .get("http://127.0.0.1:8000/carts/delete/" + data.id)
-        .then((response) => {
-          console.log("Response data:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    } else {
-      null;
+      } else if (qty_data == 0) {
+        axios
+          .post("http://127.0.0.1:8000/api/carts/delete", postData)
+          .then((response) => {
+            console.log("Response data:", response.data);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      } else {
+        null;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    try {
+      const cartResponse = await axios.get(baseURL + "/carts/pending");
+      const cart = cartResponse.data;
+      setCart(cart.length);
+    } catch (error) {
+      console.error(error);
     }
   };
+
   return (
     <div>
       <div className="flex flex-col my-2">
@@ -108,7 +163,7 @@ export default function Product_content({ data }) {
           <p className={discount_handler()}>
             disc{" "}
             {data.is_discount_percentage == 1
-              ? data.discount + " %"
+              ? data.discount
               : "Rp " + data.discount}
           </p>
         </div>

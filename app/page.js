@@ -3,17 +3,17 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import Product_content from "./component/product_content";
 import { usePathname, useRouter } from "next/navigation";
-
-export default function () {
+export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
   const [products, setproducts] = useState([]);
   const [categories, setcategories] = useState([]);
-  const [cart, setcart] = useState([]);
+  const [cart, setcart] = useState(0);
   const [cat_select, setcat_select] = useState("semua");
   const [search, setsearch] = useState("");
   const baseURL = "http://127.0.0.1:8000/api";
   const router = useRouter();
   const pathname = usePathname();
+  // function untuk menampilkan berapa product yang ada di cart pada icon cart
   const cartBadge = () => {
     if (cart.length == 0) {
       return "hidden";
@@ -40,18 +40,21 @@ export default function () {
         console.error(error);
       });
 
-    axios
-      .get(baseURL + "/carts/pending")
-      .then((response) => {
-        setcart(response.data);
-      })
-      .catch((error) => {
+    const fetchData = async () => {
+      try {
+        const cartResponse = await axios.get(baseURL + "/carts/pending");
+        const cart = cartResponse.data;
+        setcart(cart.length);
+      } catch (error) {
         console.error(error);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
   return (
     <div>
-      <div className="flex flex-col h-screen">
+      <div className="flex flex-col">
         <div className="h-20 w-full bg-primary flex gap-2 p-5">
           <div className="rounded-lg bg-gray-100 p-2">
             <svg
@@ -144,7 +147,14 @@ export default function () {
                   : product.name.toLowerCase().includes(search.toLowerCase());
               })
               .map((product, index) => {
-                return <Product_content data={product} key={product.id} />;
+                return (
+                  <Product_content
+                    data={product}
+                    key={product.id}
+                    setCart={setcart}
+                    baseURL={baseURL}
+                  />
+                );
               })}
           </div>
         </div>
@@ -169,7 +179,7 @@ export default function () {
           </svg>
         </button>
         <span className={cartBadge()}>
-          <span className="text-white text-xs">{cart.length}</span>
+          <span className="text-white text-xs">{cart}</span>
         </span>
       </div>
     </div>
