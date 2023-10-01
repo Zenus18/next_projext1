@@ -1,16 +1,17 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { authMiddleware } from "../middleware/authMiddleware";
+import Axios from "../lib/axios";
 
-export default function Page() {
+function Page() {
+  const axios = Axios;
   const [data, setData] = useState([]);
-  const baseURL = "http://127.0.0.1:8000/api/";
 
   useEffect(() => {
     axios
-      .get(baseURL + "transactions")
+      .get("/transactions")
       .then((response) => {
-        setData(response.data);
+        setData(response.data.data);
       })
       .catch((error) => {
         console.error(error);
@@ -96,3 +97,4 @@ export default function Page() {
     </div>
   );
 }
+export default authMiddleware(Page);

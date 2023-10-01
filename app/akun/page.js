@@ -1,7 +1,9 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-export default function page() {
+import handleLogout from "../controller/logoutController";
+import { authMiddleware } from "../middleware/authMiddleware";
+function Page() {
   return (
     <div className="h-screen w-full ">
       <div className="flex flex-col mx-5 mt-14 gap-5">
@@ -191,10 +193,14 @@ export default function page() {
           </div>
         </div>
 
-        <button className="btn bg-[#FF2F2F] text-white capitalize mt-12">
+        <button
+          className="btn bg-[#FF2F2F] text-white capitalize mt-12"
+          onClick={() => handleLogout()}
+        >
           Logout
         </button>
       </div>
     </div>
   );
 }
+export default authMiddleware(Page);

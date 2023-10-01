@@ -1,18 +1,19 @@
 "use client";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-export default function Product_content({ data, setCart, baseURL }) {
+import Axios from "../lib/axios";
+export default function Product_content({ data, setCart }) {
+  const axios = Axios;
   const baseImgUrl = "http://127.0.0.1:8000/storage/images/" + data.image;
   const [button_value, setbutton_value] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/api/carts/pending")
+      .get("/transactions/pending")
       .then((response) => {
         // Mencari produk yang memiliki nama yang sesuai dengan data.name
-        const matchingProduct = response.data.find((cart) => {
+        const matchingProduct = response.data.data.find((cart) => {
           return cart.product.name === data.name ? cart : null;
         });
 
@@ -26,7 +27,7 @@ export default function Product_content({ data, setCart, baseURL }) {
       .catch((error) => {
         console.error(error);
       });
-  }, [data.name]);
+  }, []);
 
   //function untuk menampilkan discount
   function discount_handler() {
@@ -64,7 +65,7 @@ export default function Product_content({ data, setCart, baseURL }) {
     try {
       qty_data == 1
         ? axios
-            .post("http://127.0.0.1:8000/api/carts/post", postData)
+            .post("/cart/post", postData)
             .then((response) => {
               console.log("Response data:", response.data);
             })
@@ -75,7 +76,7 @@ export default function Product_content({ data, setCart, baseURL }) {
               setIsLoading(false);
             })
         : axios
-            .post("http://127.0.0.1:8000/api/carts/update", postData)
+            .post("/cart/update", postData)
             .then((response) => {
               console.log("Response data:", response.data);
             })
@@ -90,8 +91,8 @@ export default function Product_content({ data, setCart, baseURL }) {
     }
 
     try {
-      const cartResponse = await axios.get(baseURL + "/carts/pending");
-      const cart = cartResponse.data;
+      const cartResponse = await axios.get("/transactions/pending");
+      const cart = cartResponse.data.data;
       setCart(cart.length);
     } catch (error) {
       console.error(error);
@@ -108,7 +109,7 @@ export default function Product_content({ data, setCart, baseURL }) {
     try {
       if (qty_data > 0) {
         axios
-          .post("http://127.0.0.1:8000/api/carts/update", postData)
+          .post("/cart/update", postData)
           .then((response) => {
             console.log("Response data:", response.data);
           })
@@ -120,7 +121,7 @@ export default function Product_content({ data, setCart, baseURL }) {
           });
       } else if (qty_data == 0) {
         axios
-          .post("http://127.0.0.1:8000/api/carts/delete", postData)
+          .post("/cart/delete", postData)
           .then((response) => {
             console.log("Response data:", response.data);
           })
@@ -138,8 +139,8 @@ export default function Product_content({ data, setCart, baseURL }) {
     }
 
     try {
-      const cartResponse = await axios.get(baseURL + "/carts/pending");
-      const cart = cartResponse.data;
+      const cartResponse = await axios.get("/transactions/pending");
+      const cart = cartResponse.data.data;
       setCart(cart.length);
     } catch (error) {
       console.error(error);

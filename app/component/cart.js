@@ -1,9 +1,13 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from "react";
-import axios from "axios";
+import Axios from "../lib/axios";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
-export default function Cart({ data, setInvoice, baseURL }) {
+export default function Cart({ data, setInvoice, setPending }) {
+  const axios = Axios;
+  const routes = useRouter();
   const baseImgUrl =
     "http://127.0.0.1:8000/storage/images/" + data.product.image;
   const [button_value, setButtonValue] = useState(data.qty);
@@ -34,7 +38,28 @@ export default function Cart({ data, setInvoice, baseURL }) {
       setButtonValue(button_value - 1);
     }
   };
-
+  const minus_handler = () => {
+    if (button_value === 1) {
+      Swal.fire({
+        title: "delete product",
+        text: "yakin ingin menghapus product?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Ya",
+        cancelButtonText: "Tidak",
+        confirmButtonColor: "#007BFF",
+        cancelButtonColor: "#DC3545",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          button_minus();
+          dataDel();
+        }
+      });
+    } else {
+      button_minus();
+      dataDel();
+    }
+  };
   const dataPost = async () => {
     const qty_data = button_value + 1;
     const postData = {
@@ -43,7 +68,7 @@ export default function Cart({ data, setInvoice, baseURL }) {
     };
 
     try {
-      const response = await axios.post(baseURL + "/carts/update", postData);
+      const response = await axios.post("/cart/update", postData);
       console.log("Response data:", response.data);
       setIsLoading(false);
     } catch (error) {
@@ -52,9 +77,7 @@ export default function Cart({ data, setInvoice, baseURL }) {
 
     // Update invoice data
     try {
-      const invoiceResponse = await axios.get(
-        baseURL + "/transactions/pending"
-      );
+      const invoiceResponse = await axios.get("/transactions/pending");
       setInvoice(invoiceResponse.data.to_be_paid);
     } catch (error) {
       console.error(error);
@@ -70,7 +93,7 @@ export default function Cart({ data, setInvoice, baseURL }) {
 
     if (qty_data > 0) {
       try {
-        const response = await axios.post(baseURL + "/carts/update", postData);
+        const response = await axios.post("/cart/update", postData);
         console.log("Response data:", response.data);
         setIsLoading(false);
       } catch (error) {
@@ -78,7 +101,9 @@ export default function Cart({ data, setInvoice, baseURL }) {
       }
     } else if (qty_data === 0) {
       try {
-        const response = await axios.post(baseURL + "/carts/delete", postData);
+        const response = await axios.post("/cart/delete", postData);
+        const pendingResponse = await axios.get("/transactions/pending");
+        setPending(pendingResponse.data.data);
         console.log("Response data:", response.data);
         setIsLoading(false);
       } catch (error) {
@@ -88,9 +113,7 @@ export default function Cart({ data, setInvoice, baseURL }) {
 
     // Update invoice data
     try {
-      const invoiceResponse = await axios.get(
-        baseURL + "/transactions/pending"
-      );
+      const invoiceResponse = await axios.get("/transactions/pending");
       setInvoice(invoiceResponse.data.to_be_paid);
     } catch (error) {
       console.error(error);
@@ -128,8 +151,7 @@ export default function Cart({ data, setInvoice, baseURL }) {
         <div className="mx-2 mt-2 flex justify-between w-full">
           <button
             onClick={() => {
-              button_minus();
-              dataDel();
+              minus_handler();
             }}
             className="p-1 border-secondary text-sm border-2 rounded-md hover:bg-accent text-secondary"
           >

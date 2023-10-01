@@ -1,9 +1,13 @@
 "use client";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-
+import loginController from "../controller/loginController";
 export default function Customform() {
   const route = useRouter();
+  const [postData, setpostData] = useState({
+    username: "",
+    password: "",
+  });
   const [TypePassword, setTypePassword] = useState(true);
   const [IconPassword, SetIconPassword] = useState(
     <svg
@@ -71,14 +75,21 @@ export default function Customform() {
     setTypePassword(!TypePassword);
   }
 
+  const onChangeHandler = (e) => {
+    const newdata = { ...postData };
+    newdata[e.target.id] = e.target.value;
+    setpostData(newdata);
+  };
   return (
     <div className="form-control w-full md:mt-32 mt-16">
       <label className="label">
-        <span className="label-text">Email or Username</span>
+        <span className="label-text">Username</span>
       </label>
       <input
         type="text"
         placeholder="Username"
+        id="username"
+        onChange={(e) => onChangeHandler(e)}
         className="input input-bordered w-full input-warning bg-white"
       />
       <label className="label">
@@ -88,6 +99,8 @@ export default function Customform() {
         <input
           className="input input-bordered join-item w-full input-warning bg-white"
           type={TypePassword ? "password" : "text"}
+          id="password"
+          onChange={(e) => onChangeHandler(e)}
           placeholder="Password"
         />
         <button className="btn join-item btn-warning" onClick={handlepassword}>
@@ -101,7 +114,7 @@ export default function Customform() {
         <button
           className="btn bg-[#FF9738] text-lime-50 hover:bg-black w-full rounded-full"
           onClick={() => {
-            route.push("/");
+            loginController(postData);
           }}
         >
           Sign In

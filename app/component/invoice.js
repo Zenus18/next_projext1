@@ -1,14 +1,13 @@
 import React from "react";
 import { useState } from "react";
-import axios from "axios";
+import Axios from "../lib/axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
-export default function Invoice({ indata }) {
-  const url = "";
+export default function Invoice({ indata, order_number }) {
+  const axios = Axios;
   const [IsLoading, setIsLoading] = useState(true);
   const routes = useRouter();
   const [data, setdata] = useState({
-    cashier_id: "1",
     customer: "",
     paid: "",
   });
@@ -29,7 +28,7 @@ export default function Invoice({ indata }) {
       if (result.isConfirmed) {
         // Lanjutkan dengan pembayaran
         axios
-          .post("http://127.0.0.1:8000/api/transactions/checkout", data)
+          .post("/transactions/checkout", data)
           .then((response) => {
             if (response.status === 201) {
               Swal.fire({
@@ -79,7 +78,7 @@ export default function Invoice({ indata }) {
     <div className="w-full bg-white border border-[#E5E4E4] rounded-xl">
       <div className="mt-4 mx-8 flex-col ">
         <label className="text-xl font-bold border-b-[1px] border-black text-black">
-          Order: #0XXX
+          Order: {order_number}
         </label>
         <div className="flex flex-col mt-5">
           <div className="flex justify-between font-medium">

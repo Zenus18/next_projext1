@@ -1,8 +1,8 @@
-"use client"
+"use client";
 import Image from "next/image";
 import Customform from "./customform";
-
-export default function page() {
+import { loginMiddleware } from "../middleware/loginMiddleware";
+function page() {
   return (
     <div className="flex justify-center relative h-full bg-blue-50">
       <div className="absolute bg-[#EFF3DD] h-[27rem] w-full md:hidden top-0">
@@ -23,3 +23,4 @@ export default function page() {
     </div>
   );
 }
+export default loginMiddleware(page);

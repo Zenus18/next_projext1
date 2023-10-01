@@ -1,56 +1,30 @@
 "use client";
-import axios from "axios";
 import { useState, useEffect } from "react";
 import Product_content from "./component/product_content";
 import { usePathname, useRouter } from "next/navigation";
-export default function Page() {
-  const [isLoading, setIsLoading] = useState(false);
+import { authMiddleware } from "./middleware/authMiddleware";
+import productController from "./controller/productController";
+function Page() {
   const [products, setproducts] = useState([]);
   const [categories, setcategories] = useState([]);
   const [cart, setcart] = useState(0);
   const [cat_select, setcat_select] = useState("semua");
   const [search, setsearch] = useState("");
-  const baseURL = "http://127.0.0.1:8000/api";
   const router = useRouter();
   const pathname = usePathname();
   // function untuk menampilkan berapa product yang ada di cart pada icon cart
   const cartBadge = () => {
-    if (cart.length == 0) {
+    if (cart < 1) {
       return "hidden";
     } else {
       return "absolute -top-2 -right-1 h-6 w-6 rounded-full bg-[#ff0000] flex justify-center items-center items";
     }
   };
+
   useEffect(() => {
-    axios
-      .get(baseURL + "/categories")
-      .then((response) => {
-        setcategories(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    //tambahkan if statement untuk index di dashboard
-    axios
-      .get(baseURL + "/products")
-      .then((response) => {
-        setproducts(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-
-    const fetchData = async () => {
-      try {
-        const cartResponse = await axios.get(baseURL + "/carts/pending");
-        const cart = cartResponse.data;
-        setcart(cart.length);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
+    productController.getCategories(setcategories);
+    productController.getPending(setcart);
+    productController.getProducts(setproducts);
   }, []);
   return (
     <div>
@@ -152,7 +126,6 @@ export default function Page() {
                     data={product}
                     key={product.id}
                     setCart={setcart}
-                    baseURL={baseURL}
                   />
                 );
               })}
@@ -185,3 +158,4 @@ export default function Page() {
     </div>
   );
 }
+export default authMiddleware(Page);

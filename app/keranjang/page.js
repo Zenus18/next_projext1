@@ -2,21 +2,22 @@
 import { useEffect, useState } from "react";
 import Cart from "../component/cart";
 import Invoice from "../component/invoice";
-import axios from "axios";
-
-export default function Page() {
+import Axios from "../lib/axios";
+import { authMiddleware } from "../middleware/authMiddleware";
+function Page() {
+  const axios = Axios;
   const [showInvoice, setShowInvoice] = useState(true);
   const [pending, setPending] = useState([]);
   const [invoice, setInvoice] = useState({});
-  const baseURL = "http://127.0.0.1:8000/api";
-
+  const [orderNumber, setorderNumber] = useState("");
   useEffect(() => {
     // Fetch data pending transactions
     axios
-      .get(baseURL + "/transactions/pending")
+      .get("/transactions/pending")
       .then((response) => {
         setPending(response.data.data);
         setInvoice(response.data.to_be_paid);
+        setorderNumber(response.data.order_number);
       })
       .catch((error) => {
         console.error(error);
@@ -51,7 +52,11 @@ export default function Page() {
         {pending.map((pendat) => {
           return (
             <div className="my-1" key={pendat.id}>
-              <Cart data={pendat} setInvoice={setInvoice} baseURL={baseURL} />
+              <Cart
+                data={pendat}
+                setInvoice={setInvoice}
+                setPending={setPending}
+              />
             </div>
           );
         })}
@@ -63,8 +68,9 @@ export default function Page() {
             : "opacity-0 transform translate-y-full"
         } transition-all duration-1000 ease-in-out w-full fixed bottom-0 mb-20 ${handleCartVisibility()}`}
       >
-        <Invoice indata={invoice} />
+        <Invoice indata={invoice} order_number={orderNumber} />
       </div>
     </div>
   );
 }
+export default authMiddleware(Page);
